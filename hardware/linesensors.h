@@ -22,6 +22,8 @@ private:
 
     float *treshold_vs;
 
+    float calibration_factor;
+
 public:
     LineSensors() {
         pinMode(EMIT_PIN, INPUT);
@@ -123,7 +125,7 @@ public:
 
         free(readings);
 
-        return norm_readings[0] - norm_readings[2] - 0.1;
+        return norm_readings[0] - norm_readings[2] - calibration_factor;
     }
 
     bool isOnLine(uint8_t sensor_no) {
@@ -135,14 +137,14 @@ public:
     }
     
     void calibrate() {
-        uint16_t readings_no = 100;
+        uint8_t readings_no = 100;
 
         float *light_avgs = this->getReadings();
-        for (int i = 0; i < MAX_LINE_SENSORS; i++) {
+        for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
             light_avgs[i] = light_avgs[i] / (float)readings_no;
         }
 
-        for (uint8_t i = 0; i < readings_no; i++) {
+        for (uint8_t i = 1; i < readings_no; i++) {
             float *readings = getReadings();
             for (int i = 0; i < MAX_LINE_SENSORS; i++) {
                 light_avgs[i] += readings[i] / (float)readings_no;
@@ -152,11 +154,14 @@ public:
 
         for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
             treshold_vs[i] = light_avgs[i] * 1.5;
-            Serial.print(treshold_vs[i]);
-            Serial.print("  ");
         }
-        Serial.println();
-        delay(200);
+
+        float line_weight_avg = 0.0;
+        for (uint8_t i = 0; i < readings_no; i++) {
+            line_weight_avg += this->getLineWeight() / (float)readings_no;
+        }
+
+        calibration_factor = line_weight_avg;
     }
 };
 

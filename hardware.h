@@ -19,6 +19,8 @@ void setupHardware() {
     sensors = LineSensors();
     in = Input();
     out = Output();
+    
+    sensors.calibrate();
 }
 
 #endif

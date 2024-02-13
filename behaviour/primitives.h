@@ -16,7 +16,7 @@ void stop() {
 
 void follow_line() {
     while(sensors.isOnLine(3)) {
-        float w = sensors.lineWeight();
+        float w = sensors.getLineWeight();
         int8_t left_pow = TURN_POW - w * LINE_FOLLOW_POW;
         int8_t right_pow = TURN_POW + w * LINE_FOLLOW_POW;
         motors.setPower(left_pow, right_pow);
