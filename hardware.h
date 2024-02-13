@@ -1,0 +1,17 @@
+#ifndef _HARDWARE_H
+#define _HARDWARE_H
+
+#include "hardware/encoders.h"
+#include "hardware/motors.h"
+#include "hardware/linesensors.h"
+#include "hardware/input.h"
+#include "hardware/output.h"
+
+Motors motors;
+LineSensors sensors;
+Input in;
+Output out;
+
+void setupHardware();
+
+#endif
