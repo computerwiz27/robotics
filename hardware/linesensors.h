@@ -12,7 +12,7 @@
 
 class LineSensors {
 private:
-    const uint8_t sensor_pins[MAX_LINE_SENSORS] = {
+    uint8_t sensor_pins[MAX_LINE_SENSORS] = {
         LS_DN1_PIN,
         LS_DN2_PIN,
         LS_DN3_PIN,

@@ -12,7 +12,7 @@
 
 class Output {
 private:
-    const uint8_t led_pins[3] = {
+    uint8_t led_pins[3] = {
     RED_LED_PIN,
     YEL_LED_PIN,
     GRN_LED_PIN

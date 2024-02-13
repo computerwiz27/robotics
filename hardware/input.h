@@ -12,7 +12,7 @@
 
 class Input {
 private:
-    const uint8_t button_pins[3] = {
+    uint8_t button_pins[3] = {
         A_BUT_PIN,
         B_BUT_PIN,
         C_BUT_PIN

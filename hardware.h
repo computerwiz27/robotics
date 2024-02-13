@@ -12,6 +12,13 @@ LineSensors sensors;
 Input in;
 Output out;
 
-void setupHardware();
+void setupHardware() {
+    setupEncoders();
+
+    motors = Motors();
+    sensors = LineSensors();
+    in = Input();
+    out = Output();
+}
 
 #endif
