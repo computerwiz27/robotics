@@ -21,7 +21,7 @@ ISR(INT6_vect);
 // Using datasheet for ATmega32U4 
 // https://www.microchip.com/en-us/product/ATmega32u4
 
-void PCINT0_vector() {
+void PCINT0_vect() {
     boolean el_A = digitalRead(ENCODER_L_XOR_PIN);
 
     // read the input of PE2
@@ -54,14 +54,9 @@ void PCINT0_vector() {
     }
 
     state_e_l = state_e_l >> 2;
-
-    Serial.print(count_e_l);
-    Serial.print(", ");
-    Serial.print(count_e_r);
-    Serial.println();
 }
 
-void INT6_vector() {
+void INT6_vect() {
     boolean er_A = digitalRead(ENCODER_R_XOR_PIN);
     boolean er_B = digitalRead(ENCODER_R_IN_PIN);
     er_A = er_A ^ er_B;
@@ -90,17 +85,10 @@ void INT6_vector() {
     }
 
     state_e_r = state_e_r >> 2;
-
-    Serial.print(count_e_l);
-    Serial.print(", ");
-    Serial.print(count_e_r);
-    Serial.println();
 }
 
 void setupEncoderL() {
     count_e_l = 0;
-
-    //a=10;
 
     // The state of the left encoder input is found at pin 
     // PE2 (port E, pin 2).
