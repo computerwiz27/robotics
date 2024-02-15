@@ -6,6 +6,7 @@
 #include "hardware/linesensors.h"
 #include "hardware/input.h"
 #include "hardware/output.h"
+#include "hardware/dimensions.h"
 
 Motors motors;
 LineSensors sensors;

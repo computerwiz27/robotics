@@ -82,6 +82,13 @@ void INT6_vect() {
         count_e_r++;
     } else if (state_e_r == 0b1110) {
         count_e_r--;
+        count_e_r--;
+    } else if (state_e_r == 0b1011) {
+        count_e_r++;
+    } else if (state_e_r == 0b1101) {
+        count_e_r++;
+    } else if (state_e_r == 0b1110) {
+        count_e_r--;
     }
 
     state_e_r = state_e_r >> 2;

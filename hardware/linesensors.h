@@ -32,10 +32,10 @@ public:
         }
 
         float *_treshold_vs = (float*)malloc(sizeof(float) * MAX_LINE_SENSORS);
-        for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
-            _treshold_vs[i] = 900;
-        }
-        treshold_vs = _treshold_vs;
+        // for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
+        //     _treshold_vs[i] = 900;
+        // }
+        // treshold_vs = _treshold_vs;
     }
 
     float *getReadings() {

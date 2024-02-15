@@ -16,6 +16,7 @@ class Motors {
 private:
     int8_t l_pow;
     int8_t r_pow;
+    
 public:
     Motors() {
         pinMode(L_PWM_PIN, OUTPUT);
