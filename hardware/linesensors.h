@@ -32,10 +32,10 @@ public:
         }
 
         float *_treshold_vs = (float*)malloc(sizeof(float) * MAX_LINE_SENSORS);
-        // for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
-        //     _treshold_vs[i] = 900;
-        // }
-        // treshold_vs = _treshold_vs;
+        for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
+            _treshold_vs[i] = 900;
+        }
+        treshold_vs = _treshold_vs;
     }
 
     float *getReadings() {
@@ -152,16 +152,18 @@ public:
             free(readings);
         }
 
+
         for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
             treshold_vs[i] = light_avgs[i] * 1.5;
         }
-
+        
         float line_weight_avg = 0.0;
         for (uint8_t i = 0; i < readings_no; i++) {
             line_weight_avg += this->getLineWeight() / (float)readings_no;
         }
 
         calibration_factor = line_weight_avg;
+
     }
 };
 
