@@ -64,7 +64,7 @@ void state_search_line() {
     stop();
 }
 
-void act_state(uint8_t state) {
+void actState(uint8_t state) {
     if (state == STATE_INITIAL) {
         state_initial();
     } else if (state == STATE_FOLLOW_LINE) {

@@ -1,18 +1,20 @@
 #include "hardware.h"
 #include "behaviour.h"
 
+#include "hardware/pid.h"
+
 uint8_t state;
-
-void setup()
-{
+void setup() {
     Serial.begin(9600);
-    delay(1000);
-
+    delay(10);
+    
     setupHardware();
+
+    heading_pid->setActive(true);
+    heading_pid->setDemand(PI);
 }
 
-void loop()
-{
-    // Serial.println(global_coords.th * RAD_TO_DEG);
-    // delay(1000);
+
+void loop() {
+
 }

@@ -139,6 +139,7 @@ public:
     void calibrate() {
         uint8_t readings_no = 100;
 
+
         float *light_avgs = this->getReadings();
         for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
             light_avgs[i] = light_avgs[i] / (float)readings_no;
@@ -152,11 +153,10 @@ public:
             free(readings);
         }
 
-
         for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
-            treshold_vs[i] = light_avgs[i] * 1.5;
+            treshold_vs[i] = light_avgs[i] * 2;
         }
-        
+            
         float line_weight_avg = 0.0;
         for (uint8_t i = 0; i < readings_no; i++) {
             line_weight_avg += this->getLineWeight() / (float)readings_no;

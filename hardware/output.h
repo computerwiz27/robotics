@@ -20,7 +20,7 @@ private:
 
 public:
     Output() {
-
+        
     }
 
     void buzz(uint32_t ms, uint8_t vol) {

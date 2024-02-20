@@ -2,17 +2,22 @@
 #define _HARDWARE_H
 
 #include "hardware/encoders.h"
-#include "hardware/motors.h"
 #include "hardware/linesensors.h"
 #include "hardware/input.h"
 #include "hardware/output.h"
-#include "hardware/kinematics.h"
+#include "hardware/pid.h"
+#include "hardware/timer3.h"
 
 Motors motors;
 LineSensors sensors;
 Input in;
 Output out;
 Kinematics kinematics;
+
+MotorController *motor_l_pid;
+MotorController *motor_r_pid;
+
+HeadingController *heading_pid;
 
 void setupHardware() {
     setupEncoders();
@@ -23,8 +28,20 @@ void setupHardware() {
     in = Input();
     out = Output();
     kinematics = Kinematics();
+
+    motor_l_pid = new MotorController(&motors, LEFT, &angular_v_l, 1, 0.5, 0.001);
+    motor_r_pid = new MotorController(&motors, RIGHT, &angular_v_r, 1, 0.5, 0.001);
+
+    heading_pid = new HeadingController(motor_l_pid, motor_r_pid, 1,0.03, 0.005);
     
     setupTimer3();
+}
+
+ISR( TIMER3_COMPA_vect ) {
+    updateKinematics();
+    motor_l_pid->update();
+    motor_r_pid->update();
+    heading_pid->update();
 }
 
 #endif
