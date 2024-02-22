@@ -36,6 +36,7 @@ public:
             _treshold_vs[i] = 900;
         }
         treshold_vs = _treshold_vs;
+        calibration_factor = 0;
     }
 
     float *getReadings() {
@@ -129,11 +130,27 @@ public:
     }
 
     bool isOnLine(uint8_t sensor_no) {
-        float reading = this->getReading(sensor_no);
-        if (reading < treshold_vs[sensor_no - 1]) {
-            return false;
+        uint8_t record_len = 5;
+
+        uint8_t line_record[record_len];
+
+        for (uint8_t i = 0; i < record_len; i++) {
+            float reading = this->getReading(sensor_no);
+            if (reading > treshold_vs[sensor_no - 1]) {
+                line_record[i] = 1;
+            }
+            else line_record[i] = 0;
         }
-        else return true;
+
+        uint8_t record_sum = 0;
+        for (uint8_t i = 0; i < record_len; i++) {
+            record_sum += line_record[i];
+        }
+
+        if (record_sum > record_len / 2) {
+            return true;
+        }
+        return false;
     }
     
     void calibrate() {
@@ -154,13 +171,14 @@ public:
         }
 
         for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
-            treshold_vs[i] = light_avgs[i] * 2;
+            treshold_vs[i] = light_avgs[i] * 1.5;
         }
             
         float line_weight_avg = 0.0;
         for (uint8_t i = 0; i < readings_no; i++) {
             line_weight_avg += this->getLineWeight() / (float)readings_no;
         }
+        Serial.println();
 
         calibration_factor = line_weight_avg;
 

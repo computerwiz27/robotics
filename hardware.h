@@ -24,15 +24,15 @@ void setupHardware() {
 
     motors = Motors();
     sensors = LineSensors();
-    sensors.calibrate();
     in = Input();
     out = Output();
     kinematics = Kinematics();
 
-    motor_l_pid = new MotorController(&motors, LEFT, &angular_v_l, 1, 0.5, 0.001);
-    motor_r_pid = new MotorController(&motors, RIGHT, &angular_v_r, 1, 0.5, 0.001);
+    motor_l_pid = new MotorController(&motors, LEFT, &angular_v_l, 1, 0.3, 0.01);
+    motor_r_pid = new MotorController(&motors, RIGHT, &angular_v_r, 1, 0.3, 0.01);
 
-    heading_pid = new HeadingController(motor_l_pid, motor_r_pid, 1,0.03, 0.005);
+    heading_pid = new HeadingController(motor_l_pid, motor_r_pid, 1, 0.035, 0.005);
+    heading_pid->setActive(false);
     
     setupTimer3();
 }

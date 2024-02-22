@@ -20,8 +20,8 @@
 // must be between  1 and 262
 #define MEASURE_TS  20 //ms
 
-#define LINE_FOLLOW_POW 15
-#define TURN_POW        15
+#define LINE_FOLLOW_POW 13
+#define TURN_POW        13
 
 typedef struct coords {
     volatile float x;
@@ -50,7 +50,7 @@ public:
         angular_v_r = 0;
     }
 
-    coords get_coordonates() {
+    coords getCoordonates() {
         coords_t ret = {
             global_coords.x,
             global_coords.y,
@@ -58,6 +58,10 @@ public:
         };
 
         return ret;
+    }
+
+    void resetCoordonates() {
+        global_coords = {0,0,0};
     }
 
 };

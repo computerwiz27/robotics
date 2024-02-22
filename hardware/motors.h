@@ -70,14 +70,6 @@ public:
         analogWrite(R_PWM_PIN, r_pow);
     }
 
-    void turn(uint8_t power, int8_t direction) {
-        if (direction == LEFT) {
-                this->setPower(-1 * power, power);
-        } else if (direction == RIGHT) {
-            this->setPower(power, -1 * power);
-        }
-    }
-
     void stop() {
         this->setPower(0, 0);
     }
