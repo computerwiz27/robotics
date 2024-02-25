@@ -7,8 +7,11 @@
 #include <math.h>
 
 // dimensions measured in mm
-#define WHEEL_RADIUS        16
-#define WHEEL_SEPARATION    85.2
+#define WHEEL_RADIUS            16
+#define WHEEL_SEPARATION        85.2
+#define MID_LINE_SENS_TO_COR    42.5
+#define SIDE_LINE_SENS_TO_COR   20
+#define SIDE_SENS_TO_COR        28
 
 // useful constants
 #define STEPS_TO_RAD    0.017536102

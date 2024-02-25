@@ -79,9 +79,6 @@ public:
     }
 
     float *getReadings(uint8_t from, uint8_t to) {
-        from--;
-        to--;
-
         if (from > MAX_LINE_SENSORS) {
             return getReadings();
         }
@@ -108,15 +105,29 @@ public:
     }
 
     float getReading(uint8_t sensor_no) {
-        float *readings = getReadings();
-        sensor_no--;
-        float sensor_reading = readings[sensor_no];
-        free(readings);
-        return sensor_reading;
+        pinMode(EMIT_PIN, OUTPUT);
+        digitalWrite(EMIT_PIN, HIGH);
+
+        pinMode(sensor_pins[sensor_no], OUTPUT);
+        digitalWrite(sensor_pins[sensor_no], HIGH);
+        delay(10);
+
+        pinMode(sensor_pins[sensor_no], INPUT);
+
+        float reading = 0;
+        uint64_t start_t = micros();
+        while (digitalRead(sensor_pins[sensor_no]) == HIGH) {
+
+        }
+        reading = (float)(micros() - start_t);
+
+        pinMode(EMIT_PIN, INPUT);
+
+        return reading;
     }
     
     float getLineWeight() {
-        float *readings = getReadings(2, 4);
+        float *readings = getReadings(1, 3);
         float sum = readings[0] + readings[2];
         float norm_readings[3];
         
@@ -130,7 +141,7 @@ public:
     }
 
     bool isOnLine(uint8_t sensor_no) {
-        uint8_t record_len = 5;
+        uint8_t record_len = 3;
 
         uint8_t line_record[record_len];
 
@@ -147,10 +158,37 @@ public:
             record_sum += line_record[i];
         }
 
-        if (record_sum > record_len / 2) {
+        if (record_sum == record_len) {
             return true;
         }
         return false;
+    }
+
+    bool *areOnLine() {
+        uint8_t record_len = 5;
+
+        float reading_avg[MAX_LINE_SENSORS];
+        for (uint8_t i = 0; i < MAX_LINE_SENSORS; i ++) {
+            reading_avg[i] = 0;
+        }
+
+        for (uint8_t i = 0; i < record_len; i ++) {
+            float *readings = getReadings();
+            for (uint8_t j = 0; j < MAX_LINE_SENSORS; j++ ) {
+                reading_avg[j] += readings[j] / record_len;
+            }
+            free(readings);
+        }
+
+        bool *onLine = (bool*)malloc(MAX_LINE_SENSORS * sizeof(bool));
+        for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
+            if(reading_avg[i] > treshold_vs[i]){
+                onLine[i] = true;
+            } 
+            else onLine[i] = false;
+        }
+
+        return onLine;
     }
     
     void calibrate() {

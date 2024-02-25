@@ -14,17 +14,32 @@ void stop() {
 }
 
 void drive_straight(int8_t power, int distance) {
-    float start_x = kinematics.getCoordonates().x;
-    float d_t = 0;
+    coords start_pos = kinematics.getCoordonates();
+    float travelled = 0;
     motor_power(power, power);
-    while(d_t < (float)distance) {
-        d_t = kinematics.getCoordonates().x - start_x;
+    while(travelled < (float)distance) {
+        coords new_pos = kinematics.getCoordonates();
+        float x_comp = start_pos.x - new_pos.x;
+        x_comp *= x_comp;
+        float y_comp = start_pos.y - new_pos.y;
+        y_comp *= y_comp;
+        travelled = sqrt(x_comp + y_comp);
     }
     stop();
 }
 
 void drive_straight(int8_t power) {
     motor_power(power, power);
+}
+
+void advance_to_sens(int8_t power, uint8_t sensor_no) {
+    if (sensor_no == 2) {
+        drive_straight(power, MID_LINE_SENS_TO_COR);
+    } else if (sensor_no == 1 || sensor_no == 3) {
+        drive_straight(power, SIDE_LINE_SENS_TO_COR);
+    } else if (sensor_no == 0 || sensor_no == 4) {
+        drive_straight(power, SIDE_SENS_TO_COR);
+    }
 }
 
 void follow_line() {
@@ -35,6 +50,7 @@ void follow_line() {
 }
 
 void turn(double angle) {
+    out.buzz(100);
     float start_th = kinematics.getCoordonates().th;
     float target = start_th + angle;
     if (target > PI) target -= 2 * PI;
@@ -43,11 +59,12 @@ void turn(double angle) {
     heading_pid->setMode(HEADING_TURN);
     heading_pid->setActive(true);
     heading_pid->setDemand(target);
-    while(kinematics.getCoordonates().th >= target * 1.05 ||
-        kinematics.getCoordonates().th <= target * 0.95 ) {
-            Serial.println(kinematics.getCoordonates().th * RAD_TO_DEG);
+    while(kinematics.getCoordonates().th >= target * 1.025 ||
+        kinematics.getCoordonates().th <= target * 0.975 ) {
+            Serial.println(global_coords.th * RAD_TO_DEG);
     }
     heading_pid->setActive(false);
+    out.buzz(100);
     stop();
 }   
 

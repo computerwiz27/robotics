@@ -74,7 +74,7 @@ protected:
 class MotorController : public PID_controller {
 private:
     Motors *motors;
-    uint8_t pos;
+    int8_t pos;
 
 public:
     MotorController(Motors *motors, uint8_t position, volatile float *measurement, float p_gain, float i_gain, float d_gain) 
