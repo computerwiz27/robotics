@@ -29,13 +29,9 @@ public:
         r_pow = 0;
     }
 
-    int8_t *getPower() {
-        int8_t *pow = (int8_t*)malloc(sizeof(int8_t) *2);
-
-        pow[0] = l_pow;
-        pow[1] = r_pow;
-
-        return pow;
+    int8_t getPower(int8_t dir) {
+        if (dir == LEFT) return l_pow;
+        return r_pow;
     }
 
     void setPower(int left, int right) {

@@ -1,23 +1,20 @@
 #include "hardware.h"
 #include "behaviour.h"
-
-#include "hardware/pid.h"
+#include "debug.h"
 
 volatile uint8_t state;
-
-#define DEBUG false
 
 void setup() {
     Serial.begin(9600);
     delay(100);
 
-
-#if !DEBUG  
     setupHardware();
+
+#if !DEBUG_STATE
     state_initial();
 #endif
 
-#if DEBUG
+#if DEBUG_STATE
     sensors.calibrate();
     out.blink(RED, 3);
 #endif
@@ -25,11 +22,11 @@ void setup() {
 
 
 void loop() {
-#if !DEBUG
+#if !DEBUG_STATE
     actState();
 #endif
 
-#if DEBUG
+#if DEBUG_STATE
     bool *onLine = sensors.areOnLine();
 
     String state;
@@ -47,19 +44,17 @@ void loop() {
     } 
     
     else if (!onLine[2]) {
-        if (onLine[1] != onLine[3]) {
-            state = String("redress course");
+        // edge case on 90 turns
+        if ( onLine[0] == true || onLine[4] == true ) {
+            state = String("intersection");
             goto end;
         }
 
-        if (
-            onLine[1] == true
-            && onLine[3] == true
-        ) {
-            state = String("intersection 3");
+        if (onLine[1] || onLine[3])  {
+            state = String("intersection");
             goto end;
         }
-
+        
         if (
             onLine[0] == false
             && onLine[1] == false
@@ -71,14 +66,14 @@ void loop() {
             distance_from_start = (int32_t)sqrt(position.x * position.x + position.y * position.y); 
 
             if(distance_from_start > END_DISTANCE_FROM_ORIGIN){
-                state = String("return to start");
+                state = String("go to start");
                 goto end;
+
             } else {
                 state = String("line end");
                 goto end;
             }
         }
-
     }
 
 end:;

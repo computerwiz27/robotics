@@ -53,6 +53,7 @@ protected:
         float p_term = p_gain * error;
 
         integral = integral + error * (float)(MEASURE_TS/100.0);
+
         float i_term = integral * i_gain;
 
         float d_term = (error - last_error) / (float)(MEASURE_TS/1000.0) * d_gain;
@@ -94,10 +95,10 @@ public:
         int power = feedback / MAX_ANGULAR_V * 100;
 
         if (this->pos == LEFT) {
-            int other_motor_power = motors->getPower()[1];
+            int other_motor_power = motors->getPower(RIGHT);
             motors->setPower(power, other_motor_power);
         } else if (this->pos == RIGHT) {
-            int other_motor_power = motors->getPower()[0];
+            int other_motor_power = motors->getPower(LEFT);
             motors->setPower(other_motor_power, power);
         }
     }
@@ -141,6 +142,8 @@ public:
     }
 
     void setDemand(float x, float y) {
+        this->integral = 0;
+
         float new_demand = atan2(y - global_coords.y, x - global_coords.x);
 
         if (new_demand > PI) {

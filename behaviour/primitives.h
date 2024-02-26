@@ -61,7 +61,6 @@ void turn(double angle) {
     heading_pid->setDemand(target);
     while(kinematics.getCoordonates().th >= target * 1.025 ||
         kinematics.getCoordonates().th <= target * 0.975 ) {
-            Serial.println(global_coords.th * RAD_TO_DEG);
     }
     heading_pid->setActive(false);
     out.buzz(100);

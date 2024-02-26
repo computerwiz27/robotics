@@ -147,7 +147,7 @@ public:
 
         for (uint8_t i = 0; i < record_len; i++) {
             float reading = this->getReading(sensor_no);
-            if (reading > treshold_vs[sensor_no - 1]) {
+            if (reading > treshold_vs[sensor_no]) {
                 line_record[i] = 1;
             }
             else line_record[i] = 0;
@@ -211,12 +211,13 @@ public:
         for (uint8_t i = 0; i < MAX_LINE_SENSORS; i++) {
             treshold_vs[i] = light_avgs[i] * 1.5;
         }
+
+        free(light_avgs);
             
         float line_weight_avg = 0.0;
         for (uint8_t i = 0; i < readings_no; i++) {
             line_weight_avg += this->getLineWeight() / (float)readings_no;
         }
-        Serial.println();
 
         calibration_factor = line_weight_avg;
 

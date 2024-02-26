@@ -24,7 +24,7 @@
 #define MEASURE_TS  20 //ms
 
 #define LINE_FOLLOW_POW 13
-#define TURN_POW        13
+#define TURN_POW        12
 
 typedef struct coords {
     volatile float x;
