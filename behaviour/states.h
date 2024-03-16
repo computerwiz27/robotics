@@ -4,9 +4,10 @@
 #include "primitives.h"
 #include "../debug.h"
 
-#define END_DISTANCE_FROM_ORIGIN 1320
+#define END_DISTANCE_FROM_ORIGIN 1100
 
 volatile int32_t distance_from_start;
+float distance_scale = 1.0;
 
 void state_initial() {
 
@@ -39,6 +40,19 @@ void state_initial() {
     stop();
 }
 
+void state_set_second_run() {
+    //adjust!
+    distance_scale = 1.075;
+    wheel_separation = 82.3;
+    run = 2;
+
+    in.waitForPress(B_BUTTON);
+    delay(100);
+    out.blink(RED, 1);
+
+    state_initial();
+}
+
 void state_follow_line() {
     out.toggle_on_led(GREEN);
     bool *onLine = sensors.areOnLine();
@@ -65,8 +79,8 @@ void state_intersection() {
 
     coords start_pos = kinematics.getCoordonates();
     float travelled = 0;
-    motor_power(10, 10);
-    while(travelled < 20) {
+    motor_power(9 ,9);
+    while(travelled < 22) {
         if(!left_path) {
             if (sensors.isOnLine(0)) {
                 left_path = true;
@@ -89,6 +103,14 @@ void state_intersection() {
     stop();
     if (sensors.isOnLine(2)) {
         front_path = true;
+    } else {
+        if (sensors.isOnLine(1)) {
+            left_path = true;
+        }
+
+        if (sensors.isOnLine(3)) {
+            right_path = true;
+        }
     }
 
 #if DEBUG_INTER
@@ -115,7 +137,7 @@ void state_intersection() {
     if (right_path && !front_path && !left_path) {
         bool *onLine = sensors.areOnLine();
         while(!( onLine[2] && (onLine[1] || onLine[3]) )) {
-            turn_in_place(RIGHT, TURN_POW * 0.7);
+            turn_in_place(RIGHT, TURN_POW);
             free(onLine);
             onLine = sensors.areOnLine();
         }
@@ -126,10 +148,10 @@ void state_intersection() {
 
     if (front_path && left_path) {
         while(sensors.isOnLine(2)) {
-            turn_in_place(LEFT, TURN_POW * 0.7);
+            turn_in_place(LEFT, TURN_POW);
         }
         while(!( onLine[2] && (onLine[1] || onLine[3]) )) {
-            turn_in_place(LEFT, TURN_POW * 0.7);
+            turn_in_place(LEFT, TURN_POW);
             free(onLine);
             onLine = sensors.areOnLine();
         }
@@ -138,7 +160,7 @@ void state_intersection() {
 
     onLine = sensors.areOnLine();
     while(!( onLine[2] && (onLine[1] || onLine[3]) )) {
-        turn_in_place(LEFT, TURN_POW * 0.7);
+        turn_in_place(LEFT, TURN_POW);
         free(onLine);
         onLine = sensors.areOnLine();
     }
@@ -151,7 +173,7 @@ void state_line_end() {
 
     bool *onLine = sensors.areOnLine();
     while(!( onLine[2] && (onLine[1] || onLine[3]) )) {
-        turn_in_place(LEFT, TURN_POW * 0.7);
+        turn_in_place(LEFT, TURN_POW);
         free(onLine);
         onLine = sensors.areOnLine();
     }
@@ -166,10 +188,13 @@ void state_line_end() {
     // delay(100);
 }
 
+
 void state_return_to_start() {
     out.toggle_on_led(RED);
     coords position = kinematics.getCoordonates();
     float distance = sqrt(position.x * position.x + position.y * position.y);
+    distance *= 1.1;
+    distance *= 1.05;
 
     heading_pid->setMode(HEADING_GOTO);
     heading_pid->setDemand(0, 0);
@@ -188,22 +213,34 @@ void state_return_to_start() {
     }
     heading_pid->setActive(false);
     stop();
-    while (true){
-        Serial.print("X: "); Serial.println(global_coords.x);
-        Serial.print("Y: "); Serial.println(global_coords.y);
-        Serial.print("th: "); Serial.println(global_coords.th);
-    }
     
+    state_set_second_run();
 }
 
-// void state_adjust_course() {
-//     dir = LEFT;
+void state_adjust_course() {
+    stop();
+    bool *onLine = sensors.areOnLine();
 
-//     while(!sensors.isOnLine(2)) {
-//         follow_line();
-//     }
-//     stop();
-// }
+    while(true) {
+        for (int i = 0; i < 5; i++ ) {
+            Serial.print("[");Serial.print(i);Serial.print("]: ");
+            Serial.print(onLine[i]); Serial.print(", ");
+        }
+        Serial.println();
+        free(onLine);
+         onLine = sensors.areOnLine();
+    }
+
+    int8_t dir = -1;
+    if (sensors.isOnLine(4)) dir = 1;
+
+    while(!sensors.isOnLine(2)) {
+        int8_t left_pow = LINE_FOLLOW_POW / 2 - dir * 0.7 * TURN_POW;
+        int8_t right_pow = LINE_FOLLOW_POW / 2 + dir * 0.7 * TURN_POW;
+        motor_power(left_pow, right_pow);
+    }
+    stop();
+}
 
 void actState() {
     bool *onLine = sensors.areOnLine();

@@ -27,6 +27,9 @@ HeadingController *heading_pid;
 void setupHardware() {
     setupEncoders();
 
+    wheel_separation = 84;
+    run = 1;
+
     motors = Motors();
     sensors = LineSensors();
     in = Input();

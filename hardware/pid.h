@@ -12,6 +12,8 @@
 #define TURN_POW        13
 #endif
 
+int run;
+
 
 class PID_controller {
 private:
@@ -115,6 +117,9 @@ private:
     MotorController *motor_l_pid;
     MotorController *motor_r_pid;
 
+    float x;
+    float y;
+
 public:
     bool active;
 
@@ -126,6 +131,9 @@ public:
 
         this->motor_l_pid = motor_l_pid;
         this->motor_r_pid = motor_r_pid;
+
+        this->x = 0;
+        this->y = 0;
     }
 
     void setActive(bool state) {
@@ -141,8 +149,11 @@ public:
         this->demand = demand;
     }
 
-    void setDemand(float x, float y) {
+    void setDemand(float _x, float _y) {
         this->integral = 0;
+
+        this->x = _x;
+        this->y = _y;
 
         float new_demand = atan2(y - global_coords.y, x - global_coords.x);
 
@@ -168,6 +179,10 @@ public:
 
         float power_l = TURN_POW * feedback + mode * LINE_FOLLOW_POW;
         float power_r = TURN_POW * -1 * feedback + mode * LINE_FOLLOW_POW;
+
+        if (run == 1 && mode == HEADING_GOTO) {
+            setDemand(x,y);
+        }
 
         this->motor_l_pid->setDemand(power_l);
         this->motor_r_pid->setDemand(power_r);

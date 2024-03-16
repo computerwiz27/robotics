@@ -8,10 +8,11 @@
 
 // dimensions measured in mm
 #define WHEEL_RADIUS            16
-#define WHEEL_SEPARATION        85.2
 #define MID_LINE_SENS_TO_COR    42.5
 #define SIDE_LINE_SENS_TO_COR   20
 #define SIDE_SENS_TO_COR        28
+
+float wheel_separation;
 
 // useful constants
 #define STEPS_TO_RAD    0.017536102
@@ -23,8 +24,8 @@
 // must be between  1 and 262
 #define MEASURE_TS  20 //ms
 
-#define LINE_FOLLOW_POW 13
-#define TURN_POW        12
+#define LINE_FOLLOW_POW 10
+#define TURN_POW        9
 
 typedef struct coords {
     volatile float x;
@@ -71,7 +72,7 @@ public:
 
 void updatePosition(float phi_l, float phi_r) {
     float x_cont = (phi_l + phi_r) * WHEEL_RADIUS / 2;
-    float th_cont = (phi_l - phi_r) *  WHEEL_RADIUS / WHEEL_SEPARATION;
+    float th_cont = (phi_l - phi_r) *  WHEEL_RADIUS / wheel_separation;
 
     global_coords.x += x_cont * cos(global_coords.th);
     global_coords.y += x_cont * sin(global_coords.th);
